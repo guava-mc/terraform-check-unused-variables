@@ -2,7 +2,4 @@ variable "one" {
 
 }
 
-variable "two" {
-
-}
 
