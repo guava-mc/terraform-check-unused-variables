@@ -1,18 +1,16 @@
 #!/usr/bin/env python3
 
 """
-usage: terraform-check-unused-variables.py [-h] [--dir DIR] [--var-file VAR_FILE] [-r] [--check-only] [--verbose]
-
 Scan terraform module(s) for unused variables and remove them.
 
 optional arguments:
   -h, --help           show this help message and exit
   --dir DIR            root dir to search for tf files in (default: ".")
-  --var-file VAR_FILE  file name for tf variables (default: "variables.tf")
-  -r                   flag to run check unused variables recursively on all directories from root dir
-  --check-only         flag to show only check for unused vars, not remove them
-  --verbose, -v        flag to show verbose output
-
+  --var-file VAR_FILE  file name for where tf variables are defined (default: "variables.tf")
+  -r, --recursive      flag to run check unused variables recursively on all directories from root dir
+  --check-only         flag to only check for unused vars, not remove them
+  --verbose, -v        flag to show verbose (debug) output
+  --quiet, -q          flag to hide all non-error output.
 """
 
 import os
@@ -70,17 +68,23 @@ def remove_unused_vars(unused_vars, var_file):
     new_file = ''
     with open(var_file, 'r') as file:
         lines = file.readlines()
-        for line in lines:
+        for i, line in enumerate(lines):
             if removing_variable:
                 if line.startswith('}'):
                     removing_variable = False
+                    if remove_trailing_new_line(i, lines):
+                        lines[i+1] = ''
                 new_file += ''
             elif line.startswith('variable'):
-                variable = line[line.find("\"") + len("\""):line.rfind("\"")]
+                variable = strip_var_name(line)
                 if variable in unused_vars:
-                    new_file += ''
-                    removing_variable = True
-                    logging.info('removing...' + variable)
+                    if var_is_ignored(i, lines):
+                        logging.info('ignore flag detected, skipping...' + variable)
+                        new_file += line
+                    else:
+                        new_file += ''
+                        removing_variable = True
+                        logging.info('removing...' + variable)
                 else:
                     new_file += line
             elif not removing_variable:
@@ -88,6 +92,14 @@ def remove_unused_vars(unused_vars, var_file):
 
     with open(var_file, 'w') as file:
         file.write(new_file)
+
+
+def remove_trailing_new_line(i, lines):
+    return i + 1 < len(lines) and lines[i + 1].strip() == ''
+
+
+def var_is_ignored(i, lines):
+    return '# ignore' in lines[i] or (i - i >= 0 and '# ignore' in lines[i - 1])
 
 
 def find_used_variables(tf_files):
@@ -112,13 +124,18 @@ def parse_variables_tf(var_file):
         lines = file.readlines()
         for line in lines:
             if line.startswith('variable'):
-                declared_vars.add(line[line.find("\"") + len("\""):line.rfind("\"")])
+                declared_vars.add(strip_var_name(line))
     logging.debug(f'all declared vars: {declared_vars}')
     return declared_vars
 
 
+def strip_var_name(line):
+    return line[line.find("\"") + len("\""):line.rfind("\"")]
+
+
 def parse_args():
     parser = argparse.ArgumentParser(description='Scan terraform module(s) for unused variables and remove them.')
+    verbosity_group = parser.add_mutually_exclusive_group()
     parser.add_argument('--dir',
                         dest='dir',
                         default='.',
@@ -127,7 +144,7 @@ def parse_args():
                         dest='var_file',
                         default='variables.tf',
                         help='file name for where tf variables are defined (default: "variables.tf")')
-    parser.add_argument('-r',
+    parser.add_argument('-r', '--recursive',
                         dest='recursive',
                         default=False,
                         action='store_true',
@@ -137,26 +154,33 @@ def parse_args():
                         default=False,
                         action='store_true',
                         help='flag to only check for unused vars, not remove them')
-    parser.add_argument('--verbose', '-v',
+    verbosity_group.add_argument('--verbose', '-v',
                         dest='debug',
                         default=False,
                         action='store_true',
                         help='flag to show verbose (debug) output')
+    verbosity_group.add_argument('--quiet', '-q',
+                        dest='quiet',
+                        default=False,
+                        action='store_true',
+                        help='flag to hide all non-error output.')
 
     return parser.parse_args()
 
 
-def init_logger(debug):
+def init_logger(debug, quiet):
     log_level = logging.INFO
-    if debug:
+    if quiet:
+        log_level = logging.ERROR
+    elif debug:
         log_level = logging.DEBUG
-    logging.basicConfig(level=log_level, format='%(levelname) -4s: %(message)s')
+    logging.basicConfig(level=log_level, format='[%(levelname) -4s] %(message)s')
     logging.debug('executing in debug mode')
 
 
 if __name__ == '__main__':
     args = parse_args()
-    init_logger(args.debug)
+    init_logger(args.debug, args.quiet)
     logging.debug(f'args: {vars(args)}\n')
     passed = []
     dirs_to_check = [args.dir]
