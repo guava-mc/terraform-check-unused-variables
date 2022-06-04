@@ -3,3 +3,4 @@
   description: This hook checks unused variables in terraform code then removes them
   entry: terraform-check-unused-variables.py
   language: python
+  pass_filenames: false
