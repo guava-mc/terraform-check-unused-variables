@@ -5,12 +5,14 @@ a pre-commit hook for finding unused variables in terraform modules and removing
 ### Scan terraform module(s) for unused variables and remove them.
 
 #### optional arguments:
-  -h, --help           show this help message and exit\
-  --dir DIR            root dir to search for tf files in (default: ".")\
-  --var-file VAR_FILE  file name for where tf variables are defined (default: "variables.tf")\
-  -r                   flag to run check unused variables recursively on all directories from root dir\
-  --check-only         flag to only check for unused vars, not remove them\
+```
+  -h, --help           show this help message and exit
+  --dir DIR            root dir to search for tf files in (default: ".")
+  --var-file VAR_FILE  file name for where tf variables are defined (default: "variables.tf")
+  -r                   flag to run check unused variables recursively on all directories from root dir
+  --check-only         flag to only check for unused vars, not remove them
   --verbose, -v        flag to show verbose (debug) output
+```
 
 # example .pre-commit-config.yaml
 
