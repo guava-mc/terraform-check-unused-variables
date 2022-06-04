@@ -125,7 +125,7 @@ def parse_args():
     parser.add_argument('--var-file',
                         dest='var_file',
                         default='variables.tf',
-                        help='file name for tf variables (default: "variables.tf")')
+                        help='file name for where tf variables are defined (default: "variables.tf")')
     parser.add_argument('-r',
                         dest='recursive',
                         default=False,
@@ -135,12 +135,12 @@ def parse_args():
                         dest='check_only',
                         default=False,
                         action='store_true',
-                        help='flag to show only check for unused vars, not remove them')
+                        help='flag to only check for unused vars, not remove them')
     parser.add_argument('--verbose', '-v',
                         dest='debug',
                         default=False,
                         action='store_true',
-                        help='flag to show verbose output')
+                        help='flag to show verbose (debug) output')
 
     return parser.parse_args()
 
