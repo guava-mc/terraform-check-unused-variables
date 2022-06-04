@@ -1,0 +1,5 @@
+repos:
+-   repo: https://github.com/mcole18/terraform-check-unused-variables.git
+    rev: 1d79ff8994192a2a700d9ede5ce5415b5e441a6e
+    hooks:
+    -   id: check-unused-vars
