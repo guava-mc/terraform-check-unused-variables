@@ -1,5 +1,17 @@
 #!/usr/bin/env python3
 
+"""
+usage: terraform-check-unused-variables.py [-h] [--dir DIR] [--var-file VAR_FILE] [--verbose]
+
+Scan root terraform module for unused variables and remove them.
+
+optional arguments:
+  -h, --help           show this help message and exit
+  --dir DIR            path to search for tf files (default: ".")
+  --var-file VAR_FILE  path to search for tf files (default: "variables.tf")
+  --verbose, -v        flag to show verbose output
+"""
+
 import os
 import re
 import sys
@@ -8,7 +20,7 @@ import logging
 from glob import glob
 
 
-def check_for_unused_vars(args):
+def check_for_unused_vars():
     # variables_file = [tf_files for files in os.walk(args.dir) for tf_files in
     #                   glob(os.path.join(files[0], '*' + args.var_file))]
     # all_tf_files = [tf_files for files in os.walk(args.dir) for tf_files in glob(os.path.join(files[0], '*.tf'))]
@@ -81,7 +93,7 @@ def parse_variables_tf(var_file):
 
 
 def parse_args():
-    parser = argparse.ArgumentParser(description='Process some integers.')
+    parser = argparse.ArgumentParser(description='Scan root terraform module for unused variables and remove them.')
     parser.add_argument('--dir',
                         dest='dir',
                         default='.',
@@ -114,4 +126,4 @@ if __name__ == '__main__':
     args = parse_args()
     init_logger(args.debug)
     logging.debug(f'args: {vars(args)}')
-    check_for_unused_vars(args)
+    check_for_unused_vars()
