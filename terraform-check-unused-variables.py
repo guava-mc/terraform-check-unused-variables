@@ -27,6 +27,7 @@ def check_for_unused_vars(dir):
     variables_file, all_tf_files = find_tf_files(dir)
     if variables_file is None:
         return True  # no files to check in this directory
+    logging.info(f'Checking {dir} for unused variables')
     variables = parse_variables_tf(variables_file)
     var_references = find_used_variables(all_tf_files)
     unused_vars = list(variables - var_references)
@@ -36,10 +37,10 @@ def check_for_unused_vars(dir):
         logging.info("%s\n" % unused_vars)
         if not args.check_only:
             remove_unused_vars(unused_vars, variables_file)
-        return True
+        return False
     else:
         logging.info('no unused variables found')
-        return False
+        return True
 
 
 def find_tf_files(_dir):
