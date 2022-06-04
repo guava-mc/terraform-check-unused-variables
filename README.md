@@ -22,5 +22,5 @@ repos:
     rev: v0.2.4-alpha
     hooks:
     -   id: check-unused-vars
-        args: [-r --dir . --var_file 'variables.tf']
+        args: [-r, --dir=., --var-file=variables.tf]
 ```

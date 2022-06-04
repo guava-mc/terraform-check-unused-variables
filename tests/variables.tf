@@ -10,10 +10,19 @@ variable "three" {
 
 }
 
-variable "threeeee" {
+variable "four" {
 
 }
 
-variable "threeeaee" {
+variable "five" {
 
 }
+
+variable "six" {
+
+}
+
+variable "seven" {
+
+}
+
