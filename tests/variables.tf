@@ -1,0 +1,8 @@
+variable "one" {
+
+}
+
+variable "two" {
+
+}
+
