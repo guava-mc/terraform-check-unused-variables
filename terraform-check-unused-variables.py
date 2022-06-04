@@ -44,17 +44,18 @@ def find_tf_files():
         logging.debug(f'tf files: {all_tf_files}')
 
         if len(all_tf_files) < 1:
-            raise Exception(f'Failed to find required tf files in {target_dir}\nEnsure running '
-                            f'from root terraform module.\n\nTo set custom dir use --dir PATH.')
+            logging.warning(f'Failed to find required tf files in {target_dir}\nEnsure running '
+                            'from root terraform module.\n\nTo set custom dir use --dir PATH.')
+            sys.exit(0)
 
         variables_file = glob(os.path.join(args.dir, '*' + args.var_file))[0]
         logging.debug(f'variable file: {variables_file}')
 
         return variables_file, all_tf_files
     except IndexError:
-        raise Exception(f'Failed to find required variable file "{args.var_file}" in {target_dir}'
-                        '\nEnsure running from root terraform module and the variable tf file exists.\n\nTo set '
-                        'custom dir use --dir PATH.\nTo set custom var_file --var-file FILENAME\n')
+        raise Exception(f'Failed to find required variable file "{args.var_file}" in {target_dir}, but did find other '
+                        'tf files.\nEnsure running from root terraform module and the variable tf file exists.\n\nTo '
+                        'set custom dir use --dir PATH.\nTo set custom var_file --var-file FILENAME\n')
 
 
 def remove_unused_vars(unused_vars, var_file):
