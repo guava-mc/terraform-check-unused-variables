@@ -142,13 +142,20 @@ def parse_args():
                         default=False,
                         action='store_true',
                         help='flag to show verbose (debug) output')
+    parser.add_argument('--quiet', '-q',
+                        dest='quiet',
+                        default=False,
+                        action='store_true',
+                        help='flag to hide all non-error output. overrides verbose')
 
     return parser.parse_args()
 
 
-def init_logger(debug):
+def init_logger(debug, quiet):
     log_level = logging.INFO
-    if debug:
+    if quiet:
+        log_level = logging.ERROR
+    elif debug:
         log_level = logging.DEBUG
     logging.basicConfig(level=log_level, format='%(levelname) -4s: %(message)s')
     logging.debug('executing in debug mode')
@@ -156,7 +163,7 @@ def init_logger(debug):
 
 if __name__ == '__main__':
     args = parse_args()
-    init_logger(args.debug)
+    init_logger(args.debug, args.quiet)
     logging.debug(f'args: {vars(args)}\n')
     passed = []
     dirs_to_check = [args.dir]

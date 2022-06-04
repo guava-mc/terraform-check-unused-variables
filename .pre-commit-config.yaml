@@ -3,7 +3,7 @@ repos:
     rev: v0.2.4-alpha
     hooks:
     -   id: check-unused-vars
-        args: [-v]
+        args: [-rv, --dir=., --var-file=variables.tf]
 -   repo: https://github.com/pre-commit/pre-commit-hooks
     sha: v1.1.1
     hooks:
