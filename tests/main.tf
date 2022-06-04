@@ -3,6 +3,6 @@ resource "aws_instance" "test" {
   instance_type = "${var.one}-${aws_instance.test.ami}"
 
   tags = {
-    Name = "ExampleAppServerInstance"
+    Name = var.module_two
   }
 }
