@@ -21,27 +21,40 @@ from glob import glob
 
 
 def check_for_unused_vars():
-    # variables_file = [tf_files for files in os.walk(args.dir) for tf_files in
-    #                   glob(os.path.join(files[0], '*' + args.var_file))]
-    # all_tf_files = [tf_files for files in os.walk(args.dir) for tf_files in glob(os.path.join(files[0], '*.tf'))]
-    variables_file = glob(os.path.join(args.dir, '*' + args.var_file))
-    all_tf_files = glob(os.path.join(args.dir, '*.tf'))
+    variables_file, all_tf_files = find_tf_files()
 
-    logging.debug(f'variable file: {variables_file}')
-    logging.debug(f'tf files: {all_tf_files}')
-
-    variables = parse_variables_tf(variables_file[0])
+    variables = parse_variables_tf(variables_file)
     var_references = find_used_variables(all_tf_files)
     unused_vars = list(variables - var_references)
 
     if len(unused_vars) > 0:
         logging.info('unused vars detected:')
         logging.info("%s\n" % unused_vars)
-        remove_unused_vars(unused_vars, variables_file[0])
+        remove_unused_vars(unused_vars, variables_file)
         sys.exit(1)
     else:
         logging.info('no unused variables found')
         sys.exit(0)
+
+
+def find_tf_files():
+    try:
+        target_dir = os.getcwd() + "/" + args.dir.replace(".", '')
+        all_tf_files = glob(os.path.join(args.dir, '*.tf'))
+        logging.debug(f'tf files: {all_tf_files}')
+
+        if len(all_tf_files) < 1:
+            raise Exception(f'Failed to find required tf files in {target_dir}\nEnsure running '
+                            f'from root terraform module.\n\nTo set custom dir use --dir PATH.')
+
+        variables_file = glob(os.path.join(args.dir, '*' + args.var_file))[0]
+        logging.debug(f'variable file: {variables_file}')
+
+        return variables_file, all_tf_files
+    except IndexError:
+        raise Exception(f'Failed to find required variable file "{args.var_file}" in {target_dir}'
+                        '\nEnsure running from root terraform module and the variable tf file exists.\n\nTo set '
+                        'custom dir use --dir PATH.\nTo set custom var_file --var-file FILENAME\n')
 
 
 def remove_unused_vars(unused_vars, var_file):
