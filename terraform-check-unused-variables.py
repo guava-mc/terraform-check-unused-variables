@@ -83,26 +83,30 @@ def remove_unused_vars(unused_vars, var_file):
 
 
 def find_used_variables(tf_files):
-    match = []
+    referenced_vars = []
     logging.debug(f'searching for unused vars')
     for tf_file in tf_files:
         if 'variables.tf' in tf_file:
             logging.debug(f'skipping {args.var_file}')
-            pass
+            continue
+        logging.debug(f'searching for var references in {tf_file}...')
         with open(tf_file, 'r') as file:
             lines = file.read()
-            match += re.findall(r'var\.([\w_]+)', lines)
-    return set(match)
+            referenced_vars += re.findall(r'var\.([\w_]+)', lines)
+    logging.debug(f'all referenced vars: {referenced_vars}')
+    return set(referenced_vars)
 
 
 def parse_variables_tf(var_file):
-    temp = set()
+    declared_vars = set()
+    logging.debug(f'scanning {args.var_file} for all defined vars')
     with open(var_file, 'r') as file:
         lines = file.readlines()
         for line in lines:
             if line.startswith('variable'):
-                temp.add(line[line.find("\"") + len("\""):line.rfind("\"")])
-    return temp
+                declared_vars.add(line[line.find("\"") + len("\""):line.rfind("\"")])
+    logging.debug(f'all declared vars: {declared_vars}')
+    return declared_vars
 
 
 def parse_args():
@@ -114,7 +118,7 @@ def parse_args():
     parser.add_argument('--var-file',
                         dest='var_file',
                         default='variables.tf',
-                        help='path to search for tf files (default: "variables.tf")')
+                        help='file name for tf variables (default: "variables.tf")')
     parser.add_argument('--verbose', '-v',
                         dest='debug',
                         default=False,
@@ -129,10 +133,7 @@ def init_logger(debug):
     if debug:
         log_level = logging.DEBUG
     logging.basicConfig(level=log_level, format='%(levelname) -4s: %(message)s')
-    # logging.debug('This message should go to the log file')
-    # logging.info('So should this')
-    # logging.warning('And this, too')
-    # logging.error('And non-ASCII stuff, too, like Øresund and Malmö')
+    logging.debug('executing in debug mode')
 
 
 if __name__ == '__main__':
