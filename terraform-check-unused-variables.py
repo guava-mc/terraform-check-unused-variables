@@ -47,7 +47,7 @@ def find_tf_files(_dir):
 
         if len(all_tf_files) < 1:
             logging.info(f'Did not find any tf files in {target_dir}\nEnsure running '
-                         'from root terraform module or correct custom dirs.\n\nTo set custom dirs use --dirs PATH')
+                         'from root terraform module or correct custom dir.\n\nTo set custom dir use --dir PATH')
             return None, None
 
         variables_file = glob(os.path.join(_dir, '*' + args.var_file))[0]
@@ -56,7 +56,7 @@ def find_tf_files(_dir):
         return variables_file, all_tf_files
     except IndexError:
         raise Exception(f'Failed to find required variable file "{args.var_file}" in {target_dir}, but did find other '
-                        'tf files.\nEnsure running from root terraform module or correct custom dirs and the variable '
+                        'tf files.\nEnsure running from root terraform module or correct custom dir and the variable '
                         'tf file exists.\n\nTo set custom dir use --dir PATH\nTo set custom var_file --var-file '
                         'FILENAME\n')
 
