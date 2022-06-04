@@ -36,10 +36,10 @@ def check_for_unused_vars(dir):
         logging.info("%s\n" % unused_vars)
         if not args.check_only:
             remove_unused_vars(unused_vars, variables_file)
-        return True
+        return False
     else:
         logging.info('no unused variables found')
-        return False
+        return True
 
 
 def find_tf_files(_dir):
