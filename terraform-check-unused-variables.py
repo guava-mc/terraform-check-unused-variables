@@ -44,8 +44,8 @@ def find_tf_files():
         logging.debug(f'tf files: {all_tf_files}')
 
         if len(all_tf_files) < 1:
-            logging.warning(f'Failed to find any tf files in {target_dir}\nEnsure running '
-                            'from root terraform module.\n\nTo set custom dir use --dir PATH')
+            logging.info(f'Did not find any tf files in {target_dir}\nEnsure running '
+                         'from root terraform module.\n\nTo set custom dir use --dir PATH')
             sys.exit(0)
 
         variables_file = glob(os.path.join(args.dir, '*' + args.var_file))[0]
