@@ -1,6 +1,6 @@
 - id: check-unused-vars
   name: Check Unused Variables
   description: This hook checks unused variables in terraform code then removes them
-  entry: terraform-check-unused-variables.py
+  entry: terraform-check-unused-variables.py --dir tests
   language: python
   pass_filenames: false
