@@ -1,15 +1,18 @@
 #!/usr/bin/env python3
 
 """
-usage: terraform-check-unused-variables.py [-h] [--dir DIR] [--var-file VAR_FILE] [--verbose]
+usage: terraform-check-unused-variables.py [-h] [--dir DIR] [--var-file VAR_FILE] [-r] [--check-only] [--verbose]
 
-Scan root terraform module for unused variables and remove them.
+Scan terraform module(s) for unused variables and remove them.
 
 optional arguments:
   -h, --help           show this help message and exit
-  --dir DIR            path to search for tf files (default: ".")
-  --var-file VAR_FILE  path to search for tf files (default: "variables.tf")
+  --dir DIR            root dir to search for tf files in (default: ".")
+  --var-file VAR_FILE  file name for tf variables (default: "variables.tf")
+  -r                   flag to run check unused variables recursively on all directories from root dir
+  --check-only         flag to show only check for unused vars, not remove them
   --verbose, -v        flag to show verbose output
+
 """
 
 import os
@@ -114,7 +117,7 @@ def parse_variables_tf(var_file):
 
 
 def parse_args():
-    parser = argparse.ArgumentParser(description='Scan root terraform module for unused variables and remove them.')
+    parser = argparse.ArgumentParser(description='Scan terraform module(s) for unused variables and remove them.')
     parser.add_argument('--dir',
                         dest='dir',
                         default='.',
