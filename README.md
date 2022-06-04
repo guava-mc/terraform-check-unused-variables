@@ -12,6 +12,7 @@ a pre-commit hook for finding unused variables in terraform modules and removing
   -r                   flag to run check unused variables recursively on all directories from root dir
   --check-only         flag to only check for unused vars, not remove them
   --verbose, -v        flag to show verbose (debug) output
+  --quiet, -q          flag to hide all non-error output. overrides verbose
 ```
 
 # example .pre-commit-config.yaml
