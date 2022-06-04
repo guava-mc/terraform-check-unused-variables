@@ -31,17 +31,18 @@ def check_for_unused_vars(dir):
     if len(unused_vars) > 0:
         logging.info('unused vars detected:')
         logging.info("%s\n" % unused_vars)
-        remove_unused_vars(unused_vars, variables_file)
+        if not args.check_only:
+            remove_unused_vars(unused_vars, variables_file)
         return True
     else:
         logging.info('no unused variables found')
         return False
 
 
-def find_tf_files(dir):
+def find_tf_files(_dir):
     try:
-        target_dir = os.getcwd() + "/" + dir.replace(".", '')
-        all_tf_files = glob(os.path.join(dir, '*.tf'))
+        target_dir = os.getcwd() + "/" + _dir.replace(".", '')
+        all_tf_files = glob(os.path.join(_dir, '*.tf'))
         logging.debug(f'tf files: {all_tf_files}')
 
         if len(all_tf_files) < 1:
@@ -49,7 +50,7 @@ def find_tf_files(dir):
                          'from root terraform module or correct custom dirs.\n\nTo set custom dirs use --dirs PATH')
             return None, None
 
-        variables_file = glob(os.path.join(dir, '*' + args.var_file))[0]
+        variables_file = glob(os.path.join(_dir, '*' + args.var_file))[0]
         logging.debug(f'variable file: {variables_file}')
 
         return variables_file, all_tf_files
@@ -127,6 +128,11 @@ def parse_args():
                         default=False,
                         action='store_true',
                         help='flag to run check unused variables recursively on all directories from root dir')
+    parser.add_argument('--check-only',
+                        dest='check_only',
+                        default=False,
+                        action='store_true',
+                        help='flag to show only check for unused vars, not remove them')
     parser.add_argument('--verbose', '-v',
                         dest='debug',
                         default=False,
@@ -151,11 +157,10 @@ if __name__ == '__main__':
     passed = []
     dirs_to_check = [args.dir]
     if args.recursive:
-        print('TODO get all subdirs')
-        dirs_to_check = [x[0] for x in os.walk(args.dir) if not x[0].startswith('./.') and '.terraform' not in x]
-    for dir in dirs_to_check:
-        logging.debug(f'Checking for unused vars in {dir}')
-        passed.append(check_for_unused_vars(dir))
+        dirs_to_check = [x[0] for x in os.walk(args.dir) if not x[0].startswith('./.') and '.terraform' not in x]  # make this better
+    for _dir in dirs_to_check:
+        logging.debug(f'Checking for unused vars in {_dir}')
+        passed.append(check_for_unused_vars(_dir))
     if all(passed):
         sys.exit(0)
     else:
