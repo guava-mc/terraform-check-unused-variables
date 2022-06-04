@@ -20,9 +20,10 @@ import logging
 from glob import glob
 
 
-def check_for_unused_vars():
-    variables_file, all_tf_files = find_tf_files()
-
+def check_for_unused_vars(dir):
+    variables_file, all_tf_files = find_tf_files(dir)
+    if variables_file is None:
+        return True  # no files to check in this directory
     variables = parse_variables_tf(variables_file)
     var_references = find_used_variables(all_tf_files)
     unused_vars = list(variables - var_references)
@@ -31,31 +32,32 @@ def check_for_unused_vars():
         logging.info('unused vars detected:')
         logging.info("%s\n" % unused_vars)
         remove_unused_vars(unused_vars, variables_file)
-        sys.exit(1)
+        return True
     else:
         logging.info('no unused variables found')
-        sys.exit(0)
+        return False
 
 
-def find_tf_files():
+def find_tf_files(dir):
     try:
-        target_dir = os.getcwd() + "/" + args.dir.replace(".", '')
-        all_tf_files = glob(os.path.join(args.dir, '*.tf'))
+        target_dir = os.getcwd() + "/" + dir.replace(".", '')
+        all_tf_files = glob(os.path.join(dir, '*.tf'))
         logging.debug(f'tf files: {all_tf_files}')
 
         if len(all_tf_files) < 1:
             logging.info(f'Did not find any tf files in {target_dir}\nEnsure running '
-                         'from root terraform module.\n\nTo set custom dir use --dir PATH')
-            sys.exit(0)
+                         'from root terraform module or correct custom dirs.\n\nTo set custom dirs use --dirs PATH')
+            return None, None
 
-        variables_file = glob(os.path.join(args.dir, '*' + args.var_file))[0]
+        variables_file = glob(os.path.join(dir, '*' + args.var_file))[0]
         logging.debug(f'variable file: {variables_file}')
 
         return variables_file, all_tf_files
     except IndexError:
         raise Exception(f'Failed to find required variable file "{args.var_file}" in {target_dir}, but did find other '
-                        'tf files.\nEnsure running from root terraform module and the variable tf file exists.\n\nTo '
-                        'set custom dir use --dir PATH\nTo set custom var_file --var-file FILENAME\n')
+                        'tf files.\nEnsure running from root terraform module or correct custom dirs and the variable '
+                        'tf file exists.\n\nTo set custom dir use --dir PATH\nTo set custom var_file --var-file '
+                        'FILENAME\n')
 
 
 def remove_unused_vars(unused_vars, var_file):
@@ -115,11 +117,16 @@ def parse_args():
     parser.add_argument('--dir',
                         dest='dir',
                         default='.',
-                        help='path to search for tf files (default: ".")')
+                        help='root dir to search for tf files in (default: ".")')
     parser.add_argument('--var-file',
                         dest='var_file',
                         default='variables.tf',
                         help='file name for tf variables (default: "variables.tf")')
+    parser.add_argument('-r',
+                        dest='recursive',
+                        default=False,
+                        action='store_true',
+                        help='flag to run check unused variables recursively on all directories from root dir')
     parser.add_argument('--verbose', '-v',
                         dest='debug',
                         default=False,
@@ -141,4 +148,15 @@ if __name__ == '__main__':
     args = parse_args()
     init_logger(args.debug)
     logging.debug(f'args: {vars(args)}')
-    check_for_unused_vars()
+    passed = []
+    dirs_to_check = [args.dir]
+    if args.recursive:
+        print('TODO get all subdirs')
+        dirs_to_check = [x[0] for x in os.walk(args.dir) if not x[0].startswith('./.') and '.terraform' not in x]
+    for dir in dirs_to_check:
+        logging.debug(f'Checking for unused vars in {dir}')
+        passed.append(check_for_unused_vars(dir))
+    if all(passed):
+        sys.exit(0)
+    else:
+        sys.exit(1)
