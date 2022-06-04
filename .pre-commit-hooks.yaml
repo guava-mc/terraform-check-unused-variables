@@ -5,3 +5,4 @@
   language: python
   exclude: ^\.terraform$
   files: ^.*\.tf$
+  pass_filenames: false
