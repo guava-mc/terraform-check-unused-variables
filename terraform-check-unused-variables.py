@@ -153,7 +153,7 @@ def init_logger(debug):
 if __name__ == '__main__':
     args = parse_args()
     init_logger(args.debug)
-    logging.debug(f'args: {vars(args)}')
+    logging.debug(f'args: {vars(args)}\n')
     passed = []
     dirs_to_check = [args.dir]
     if args.recursive:
@@ -161,6 +161,7 @@ if __name__ == '__main__':
     for _dir in dirs_to_check:
         logging.debug(f'Checking for unused vars in {_dir}')
         passed.append(check_for_unused_vars(_dir))
+        logging.debug(f'Completed check in {_dir}\n')
     if all(passed):
         sys.exit(0)
     else:
