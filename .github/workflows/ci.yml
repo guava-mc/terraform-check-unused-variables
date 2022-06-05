@@ -22,7 +22,7 @@ jobs:
       - name: Get PR log messages
         id: log-dump
         run:  |
-              echo echo "log-dump<<EOF >> $GITHUB_ENV
+              echo echo "log-dump<<EOF" >> $GITHUB_ENV
               git log origin/main..HEAD -q --oneline >> $GITHUB_ENV
               echo "EOF" >> $GITHUB_ENV
       - name: Bump semver
