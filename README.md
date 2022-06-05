@@ -63,17 +63,17 @@ ex 2:
 ```hcl
 # ignore
 variable "ignore_above" {
-#  description: "ignores variables with # ignore commented on previous line"
-#  type = bool
-#  default = True  
+  description: "ignores variables with # ignore commented on previous line"
+  type = bool
+  default = True  
 }
 ```
 
 ex 3:
 ```hcl
 variable "ignore_after" { # ignore
-#  description: "ignores variables with # ignore comment at end of line"
-#  type = bool
-#  default = True  
+  description: "ignores variables with # ignore comment at end of line"
+  type = bool
+  default = True  
 }
 ```
