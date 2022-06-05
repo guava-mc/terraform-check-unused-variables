@@ -16,7 +16,7 @@ jobs:
       - uses: actions/checkout@v3
       - name: Get the latest tag
         id: latest-tag
-        run: echo "::set-output name=latest-semver::$(git tag | sort -V | tail -1)"
+        run: echo "latest-semver=$(git tag | sort -V | tail -1)" >> $GITHUB_ENV
       - name: Bump semver
         run: |
-          echo "{{ steps.latest-tag.outputs.latest-semver }}"
+          echo "${{ env.latest-semver }}"
