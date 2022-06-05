@@ -70,17 +70,23 @@ def remove_unused_vars(unused_vars, var_file):
     new_file = ''
     with open(var_file, 'r') as file:
         lines = file.readlines()
-        for line in lines:
+        for i, line in enumerate(lines):
             if removing_variable:
                 if line.startswith('}'):
                     removing_variable = False
+                    if remove_trailing_new_line(i, lines):
+                        lines[i+1] = ''
                 new_file += ''
             elif line.startswith('variable'):
-                variable = line[line.find("\"") + len("\""):line.rfind("\"")]
+                variable = strip_var_name(line)
                 if variable in unused_vars:
-                    new_file += ''
-                    removing_variable = True
-                    logging.info('removing...' + variable)
+                    if var_is_ignored(i, lines):
+                        logging.info('ignore flag detected, skipping...' + variable)
+                        new_file += line
+                    else:
+                        new_file += ''
+                        removing_variable = True
+                        logging.info('removing...' + variable)
                 else:
                     new_file += line
             elif not removing_variable:
@@ -88,6 +94,14 @@ def remove_unused_vars(unused_vars, var_file):
 
     with open(var_file, 'w') as file:
         file.write(new_file)
+
+
+def remove_trailing_new_line(i, lines):
+    return i + 1 < len(lines) and lines[i + 1].strip() == ''
+
+
+def var_is_ignored(i, lines):
+    return '# ignore' in lines[i] or (i - i >= 0 and '# ignore' in lines[i - 1])
 
 
 def find_used_variables(tf_files):
@@ -112,9 +126,13 @@ def parse_variables_tf(var_file):
         lines = file.readlines()
         for line in lines:
             if line.startswith('variable'):
-                declared_vars.add(line[line.find("\"") + len("\""):line.rfind("\"")])
+                declared_vars.add(strip_var_name(line))
     logging.debug(f'all declared vars: {declared_vars}')
     return declared_vars
+
+
+def strip_var_name(line):
+    return line[line.find("\"") + len("\""):line.rfind("\"")]
 
 
 def parse_args():
