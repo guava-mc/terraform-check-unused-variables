@@ -21,7 +21,7 @@ jobs:
         run: echo "latest-semver=$(git tag | sort -V | tail -1)" >> $GITHUB_ENV
       - name: Get PR log messages
         id: log-dump
-        run: echo "log-dump=$(git log HEAD^..HEAD -q --oneline)" >> $GITHUB_ENV
+        run: echo "log-dump<<EOF$(git log HEAD^..HEAD -q --oneline)EOF" >> $GITHUB_ENV
       - name: Bump semver
         run:  |
               if [[ $(${{ env.log-dump }} | grep -i major) ]]; then 
