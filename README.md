@@ -15,7 +15,7 @@ a pre-commit hook for finding unused variables in terraform modules and removing
   --quiet, -q          flag to hide all non-error output. overrides verbose
 ```
 
-# example .pre-commit-config.yaml
+### example .pre-commit-config.yaml
 
 ```yaml
 repos:
@@ -24,4 +24,56 @@ repos:
     hooks:
     -   id: check-unused-vars
         args: [-r, --dir=., --var-file=variables.tf]
+```
+### Assumptions
+
+This pre-commit hook assumes standard terraform practices where all variables are declared in a single file for a module and that variables are declared with no leading white space on the keyword or before the closing curly brace.
+
+ex: variables.tf
+```hcl
+variable "example_one" {
+    default = null
+}
+
+variable "example_two" {
+    description = "this is another example"
+    default = null
+}
+
+variable "example_three" {
+    description = "this is another another example"
+    type = string
+}
+```
+
+### skipping desired unused variables
+
+To ignore, or skip removing unused variables you can either comment out the variable since the check assumes the line starts with the keyword variable, or you can add a `# ignore` comment on the previous line, or an `# ignore` comments at the end of the line where the variable is declared.
+
+ex 1:
+```hcl
+# variable "commented_out" {
+#  description: "ignores commented variables"
+#  type = list(string)
+#  default = ['commented', 'out', 'variables', 'are', 'skipped']  
+# }
+```
+
+ex 2:
+```hcl
+# ignore
+variable "ignore_above" {
+#  description: "ignores variables with # ignore commented on previous line"
+#  type = bool
+#  default = True  
+}
+```
+
+ex 3:
+```hcl
+variable "ignore_after" { # ignore
+#  description: "ignores variables with # ignore comment at end of line"
+#  type = bool
+#  default = True  
+}
 ```
