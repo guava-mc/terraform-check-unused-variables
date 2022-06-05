@@ -19,16 +19,18 @@ jobs:
       - name: Get the latest tag
         id: latest-tag
         run: echo "latest-semver=$(git tag | sort -V | tail -1)" >> $GITHUB_ENV
+      - name: Get PR log messages
+        id: log-dump
+        run: echo "log-dump=$(git log HEAD^..HEAD -q --oneline)" >> $GITHUB_ENV
       - name: Bump semver
-        run: |
-          echo "log-dump=$(git log HEAD^^..HEAD -q --oneline)" >> $GITHUB_ENV
-          if [[ $(${{ env.log-dump }} | grep -i major) ]]; then 
-            echo "major";
-          elif [[ $(${{ env.log-dump }} | grep -i minor) ]]; then 
-            echo "minor"
-          elif [[ $(${{ env.log-dump }} | grep -i patch) ]]; then
-            echo "patch"
-          else
-            exit 1
-          fi
-        shell: bash
+        run:  |
+              if [[ $(${{ env.log-dump }} | grep -i major) ]]; then 
+                echo "major";
+              elif [[ $(${{ env.log-dump }} | grep -i minor) ]]; then 
+                echo "minor"
+              elif [[ $(${{ env.log-dump }} | grep -i patch) ]]; then
+                echo "patch"
+              else
+                exit 1
+              fi
+              shell: bash
