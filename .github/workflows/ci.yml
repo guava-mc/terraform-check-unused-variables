@@ -27,11 +27,11 @@ jobs:
               echo "EOF" >> $GITHUB_ENV
       - name: Bump semver
         run:  |
-              if [[ $(${{ env.log-dump }} | grep -i major) ]]; then 
+              if [[ $(echo "${{ env.log-dump }}" | grep -i major) ]]; then 
                 echo "major";
-              elif [[ $(${{ env.log-dump }} | grep -i minor) ]]; then 
+              elif [[ $(echo "${{ env.log-dump }}" | grep -i minor) ]]; then 
                 echo "minor"
-              elif [[ $(${{ env.log-dump }} | grep -i patch) ]]; then
+              elif [[ $(echo "${{ env.log-dump }}" | grep -i patch) ]]; then
                 echo "patch"
               else
                 exit 1
