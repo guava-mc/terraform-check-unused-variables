@@ -137,6 +137,7 @@ def strip_var_name(line):
 
 def parse_args():
     parser = argparse.ArgumentParser(description='Scan terraform module(s) for unused variables and remove them.')
+    verbosity_group = parser.add_mutually_exclusive_group()
     parser.add_argument('--dir',
                         dest='dir',
                         default='.',
@@ -155,12 +156,12 @@ def parse_args():
                         default=False,
                         action='store_true',
                         help='flag to only check for unused vars, not remove them')
-    parser.add_argument('--verbose', '-v',
+    verbosity_group.add_argument('--verbose', '-v',
                         dest='debug',
                         default=False,
                         action='store_true',
                         help='flag to show verbose (debug) output')
-    parser.add_argument('--quiet', '-q',
+    verbosity_group.add_argument('--quiet', '-q',
                         dest='quiet',
                         default=False,
                         action='store_true',
