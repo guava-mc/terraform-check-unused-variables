@@ -18,7 +18,7 @@ jobs:
         with:
           fetch-depth: 0
       - run: |
-          git fetch --unshallow --tags
+          git fetch --all --tags
           echo $?
           git tag --list
 
