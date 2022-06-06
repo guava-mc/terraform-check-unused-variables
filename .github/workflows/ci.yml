@@ -14,29 +14,6 @@ jobs:
 
     steps:
 
-# semantic version
-      - name: Install GitVersion
-        uses: gittools/actions/gitversion/setup@v0.9.7
-        with:
-          versionSpec: '5.x'
-
-      - name: Checkout
-        uses: actions/checkout@v2
-        with:
-          fetch-depth: 0
-
-      - name: Show GitVersion Config
-        uses: gittools/actions/gitversion/execute@v0.9.7
-        with:
-          additionalArguments: '/showConfig'
-
-      - name: Determine Version
-        uses: gittools/actions/gitversion/execute@v0.9.7
-
-      - name: Display SemVer
-        run: |
-          echo "SemVer: $GITVERSION_SEMVER"
-
       - uses: paulhatch/semantic-version@v4.0.2
         with:
           # The prefix to use to identify tags
@@ -48,7 +25,9 @@ jobs:
           minor_pattern: "(MINOR)"
           # A string to determine the format of the version output
           format: "${major}.${minor}.${patch}-prerelease${increment}"
-    
+          # If this is set to true, *every* commit will be treated as a new version.
+          bump_each_commit: false
+
 # python
       - name: Set Up Python
         uses: actions/setup-python@v3
