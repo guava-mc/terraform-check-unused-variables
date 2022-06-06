@@ -9,9 +9,23 @@ jobs:
         working-directory: ./
 
     steps:
-      - uses: actions/checkout@v3
+
+# semantic version
+      - name: Install GitVersion
+        uses: gittools/actions/gitversion/setup@v0.9.7
+        with:
+          versionSpec: '5.x'
+
+      - name: Checkout
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+
+      - name: Determine Version
+        uses: gittools/actions/gitversion/execute@v0.9.7
     
-      - name: set up python
+# python
+      - name: Set Up Python
         uses: actions/setup-python@v3
         with:
             python-version: 3.9.7
@@ -20,6 +34,8 @@ jobs:
         run: |
             python3 -m pip install --upgrade pip
             pip install -r requirements.txt
+
+
 
 #- name: Lint with flake8
 #run: |
