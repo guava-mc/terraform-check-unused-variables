@@ -1,0 +1,39 @@
+name: CI
+
+on: [push]
+
+jobs: 
+  build:
+    runs-on: ubuntu-latest
+    env:
+        working-directory: ./
+
+    steps:
+      - uses: actions/checkout@v3
+    
+      - name: set up python
+        uses: actions/setup-python@v3
+        with:
+            python-version: 3.9.7
+    
+      - name: Install pip
+        run: |
+            python3 -m pip install --upgrade pip
+            pip install -r requirements.txt
+
+#- name: Lint with flake8
+#run: |
+#pip install flake8
+#flake8
+
+#- name: Coverage report
+#working-directory: ./
+#run: |
+#pip install coverage
+#coverage run manage.py test
+#coverage report
+
+#- name: Run tests
+#working-directory: ./tests
+#run: python3 
+
