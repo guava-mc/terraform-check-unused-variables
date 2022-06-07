@@ -20,7 +20,7 @@ a pre-commit hook for finding unused variables in terraform modules and removing
 ```yaml
 repos:
 -   repo: https://github.com/mcole18/terraform-check-unused-variables.git
-    rev: v0.2.4-alpha
+    rev: v0.2.5-alpha
     hooks:
     -   id: check-unused-vars
         args: [-r, --dir=., --var-file=variables.tf]
