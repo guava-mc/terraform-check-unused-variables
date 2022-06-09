@@ -1,18 +1,16 @@
 #!/usr/bin/env python3
 
 """
-usage: terraform-check-unused-variables.py [-h] [--dir DIR] [--var-file VAR_FILE] [-r] [--check-only] [--verbose]
-
 Scan terraform module(s) for unused variables and remove them.
 
 optional arguments:
   -h, --help           show this help message and exit
   --dir DIR            root dir to search for tf files in (default: ".")
-  --var-file VAR_FILE  file name for tf variables (default: "variables.tf")
-  -r                   flag to run check unused variables recursively on all directories from root dir
-  --check-only         flag to show only check for unused vars, not remove them
-  --verbose, -v        flag to show verbose output
-
+  --var-file VAR_FILE  file name for where tf variables are defined (default: "variables.tf")
+  -r, --recursive      flag to run check unused variables recursively on all directories from root dir
+  --check-only         flag to only check for unused vars, not remove them
+  --verbose, -v        flag to show verbose (debug) output
+  --quiet, -q          flag to hide all non-error output. overrides verbose
 """
 
 import os
@@ -145,7 +143,7 @@ def parse_args():
                         dest='var_file',
                         default='variables.tf',
                         help='file name for where tf variables are defined (default: "variables.tf")')
-    parser.add_argument('-r',
+    parser.add_argument('-r', '--recursive',
                         dest='recursive',
                         default=False,
                         action='store_true',
@@ -175,7 +173,7 @@ def init_logger(debug, quiet):
         log_level = logging.ERROR
     elif debug:
         log_level = logging.DEBUG
-    logging.basicConfig(level=log_level, format='%(levelname) -4s: %(message)s')
+    logging.basicConfig(level=log_level, format='[%(levelname) -4s] %(message)s')
     logging.debug('executing in debug mode')
 
 
