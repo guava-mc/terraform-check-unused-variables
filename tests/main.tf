@@ -4,5 +4,6 @@ resource "aws_instance" "test" {
 
   tags = {
     Name = var.module_two
+    Env  = "svar.eight"
   }
 }
