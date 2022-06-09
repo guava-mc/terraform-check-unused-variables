@@ -9,10 +9,10 @@ a pre-commit hook for finding unused variables in terraform modules and removing
   -h, --help           show this help message and exit
   --dir DIR            root dir to search for tf files in (default: ".")
   --var-file VAR_FILE  file name for where tf variables are defined (default: "variables.tf")
-  -r                   flag to run check unused variables recursively on all directories from root dir
+  -r, --recursive      flag to run check unused variables recursively on all directories from root dir
   --check-only         flag to only check for unused vars, not remove them
   --verbose, -v        flag to show verbose (debug) output
-  --quiet, -q          flag to hide all non-error output. overrides verbose
+  --quiet, -q          flag to hide all non-error output.
 ```
 
 ### example .pre-commit-config.yaml
