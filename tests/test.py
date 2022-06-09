@@ -25,11 +25,26 @@ def get_results(args):
                 RESULT_VALUES.append(text)
 
 
-def run_test(args):
-    os.system(f"python3 {PARENT_DIR}/terraform-check-unused-variables.py -r")
+def run_dir_test(args):
+    os.system(f"python3 {PARENT_DIR}/terraform-check-unused-variables.py --dir tests -q")
+    get_results(args)
+    print('dir test 1...', end='')
+    assert EXPECTED_VALUES[0] == RESULT_VALUES[0]
+    print('pass')
+    print('dir test 2...', end='')
+    assert EXPECTED_VALUES[1] != RESULT_VALUES[1]
+    print('pass')
+    clean_up()
+
+
+def run_recursive_test(args):
+    os.system(f"python3 {PARENT_DIR}/terraform-check-unused-variables.py -rq")
     get_results(args)
     for i, file in enumerate(EXPECTED_VALUES):
+        print(f'recursive test {1}...', end='')
         assert file == RESULT_VALUES[i]
+        print('pass')
+    clean_up()
 
 
 def clean_up():
@@ -40,8 +55,20 @@ def parse_args():
     return {}
 
 
+def test_header(text):
+    whitespace = '    '
+    text = whitespace + text + whitespace
+    flavor = '=' * ((80 - len(text)) // 2)
+    text = flavor + text + flavor + '\n'
+    linebreak = '=' * (len(text)-1) + '\n'
+    print(linebreak + text + linebreak)
+
+
 if __name__ == '__main__':
-    args = parse_args()
-    # setup(args)
-    run_test(args)
-    clean_up()
+    try:
+        args = parse_args()
+        test_header('Running tests')
+        run_dir_test(args)
+        run_recursive_test(args)
+    finally:
+        clean_up()
