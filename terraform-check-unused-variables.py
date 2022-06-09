@@ -73,7 +73,7 @@ def remove_unused_vars(unused_vars, var_file):
                 if line.startswith('}'):
                     removing_variable = False
                     if remove_trailing_new_line(i, lines):
-                        lines[i+1] = ''
+                        lines[i + 1] = ''
                 new_file += ''
             elif line.startswith('variable'):
                 variable = strip_var_name(line)
@@ -144,26 +144,26 @@ def parse_args():
                         dest='var_file',
                         default='variables.tf',
                         help='file name for where tf variables are defined (default: "variables.tf")')
-    parser.add_argument('-r', '--recursive',
-                        dest='recursive',
-                        default=False,
-                        action='store_true',
-                        help='flag to run check unused variables recursively on all directories from root dir')
     parser.add_argument('--check-only',
                         dest='check_only',
                         default=False,
                         action='store_true',
                         help='flag to only check for unused vars, not remove them')
-    verbosity_group.add_argument('--verbose', '-v',
-                        dest='debug',
+    parser.add_argument('-r', '--recursive',
+                        dest='recursive',
                         default=False,
                         action='store_true',
-                        help='flag to show verbose (debug) output')
-    verbosity_group.add_argument('--quiet', '-q',
-                        dest='quiet',
-                        default=False,
-                        action='store_true',
-                        help='flag to hide all non-error output.')
+                        help='flag to run check unused variables recursively on all directories from root dir')
+    verbosity_group.add_argument('-v', '--verbose',
+                                 dest='debug',
+                                 default=False,
+                                 action='store_true',
+                                 help='flag to show verbose (debug) output')
+    verbosity_group.add_argument('-q', '--quiet',
+                                 dest='quiet',
+                                 default=False,
+                                 action='store_true',
+                                 help='flag to hide all non-error output.')
 
     return parser.parse_args()
 
@@ -185,7 +185,8 @@ if __name__ == '__main__':
     passed = []
     dirs_to_check = [args.dir]
     if args.recursive:
-        dirs_to_check = [x[0] for x in os.walk(args.dir) if not x[0].startswith('./.') and '.terraform' not in x]  # make this better
+        dirs_to_check = [x[0] for x in os.walk(args.dir) if
+                         not x[0].startswith('./.') and '.terraform' not in x]  # make this better
     for _dir in dirs_to_check:
         logging.debug(f'Checking for unused vars in {_dir}')
         passed.append(check_for_unused_vars(_dir))
