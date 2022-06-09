@@ -6,23 +6,24 @@ variable "two" {
 
 }
 
-variable "three" {
-
-}
-
-variable "four" {
-
-}
-
 variable "five" {
 
 }
 
-variable "six" {
+variable "eight" {
 
 }
 
-variable "seven" {
+# ignore
+variable "nine" {
 
 }
+
+variable "ten" { # ignore
+
+}
+
+# variable "eleven" {
+#
+# }
 
