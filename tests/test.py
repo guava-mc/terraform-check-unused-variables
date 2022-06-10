@@ -41,7 +41,7 @@ def run_recursive_test(args):
     os.system(f"python3 {PARENT_DIR}/terraform-check-unused-variables.py -rq")
     get_results(args)
     for i, file in enumerate(EXPECTED_VALUES):
-        print(f'recursive test {1}...', end='')
+        print(f'recursive test {i + 1}...', end='')
         assert file == RESULT_VALUES[i]
         print('pass')
     clean_up()
