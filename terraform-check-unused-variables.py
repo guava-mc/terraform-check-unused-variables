@@ -188,7 +188,7 @@ if __name__ == '__main__':
     dirs_to_check = [args.dir]
     if args.recursive:
         dirs_to_check = [x[0] for x in os.walk(args.dir) if
-                         len(x[0].split('/.')) < 2]
+                         len(x[0].split('/.')) < 2 and len(x[0].split('\\.')) < 2]
     for _dir in dirs_to_check:
         logging.debug(f'Checking for unused vars in {_dir}')
         passed.append(check_for_unused_vars(_dir))
