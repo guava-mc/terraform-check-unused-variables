@@ -99,7 +99,8 @@ def remove_trailing_new_line(i, lines):
 
 
 def var_is_ignored(i, lines):
-    return '# ignore' in lines[i] or (i - i >= 0 and '# ignore' in lines[i - 1])
+    ignore_comment = '# ' + args.ignore_txt
+    return ignore_comment in lines[i] or (i - 1 >= 0 and ignore_comment in lines[i - 1])
 
 
 def find_used_variables(tf_files):
@@ -156,6 +157,10 @@ def parse_args():
                         default=False,
                         action='store_true',
                         help='flag to run check unused variables recursively on all directories from root dir')
+    parser.add_argument('--ignore',
+                        dest='ignore_txt',
+                        default='ignore',
+                        help='text in variable declaration comment used to tell the hook to ignore a specific unused variable (Default: "ignore")')
     verbosity_group.add_argument('-v', '--verbose',
                                  dest='debug',
                                  default=False,

@@ -38,11 +38,23 @@ def run_dir_test(args):
 
 
 def run_recursive_test(args):
-    os.system(f"python3 {PARENT_DIR}/terraform-check-unused-variables.py -rq")
+    os.system(f"python3 {PARENT_DIR}/terraform-check-unused-variables.py -rq ")
     get_results(args)
     for i, file in enumerate(EXPECTED_VALUES):
         print(f'recursive test {i + 1}...', end='')
         assert file == RESULT_VALUES[i]
+        print('pass')
+    clean_up()
+
+
+def run_ignore_test(args):
+    ignore_flag = 'tf-check-unused-vars:skip'
+    os.system(f"python3 {PARENT_DIR}/terraform-check-unused-variables.py -rq --ignore {ignore_flag}")
+    get_results(args)
+    for i, file in enumerate(RESULT_VALUES):
+        print(f'ignore test {i + 1}...', end='')
+        assert ignore_flag in file
+        assert '# ignore' not in file
         print('pass')
     clean_up()
 
@@ -70,5 +82,6 @@ if __name__ == '__main__':
         test_header('Running tests')
         run_dir_test(args)
         run_recursive_test(args)
+        run_ignore_test(args)
     finally:
         clean_up()

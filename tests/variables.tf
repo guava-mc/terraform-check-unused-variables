@@ -43,3 +43,7 @@ variable "ten" { # ignore
 #
 # }
 
+# tf-check-unused-vars:skip
+variable "special_ignore_comment" {
+
+}
