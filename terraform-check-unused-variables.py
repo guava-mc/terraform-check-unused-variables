@@ -65,7 +65,6 @@ def find_tf_files(_dir):
 
 def remove_unused_vars(unused_vars, var_file):
     removing_variable = False
-    new_file = ''
     with open(var_file, 'r') as file:
         lines = file.readlines()
         for i, line in enumerate(lines):
@@ -74,24 +73,30 @@ def remove_unused_vars(unused_vars, var_file):
                     removing_variable = False
                     if remove_trailing_new_line(i, lines):
                         lines[i + 1] = ''
-                new_file += ''
+                lines[i] = ''
             elif line.startswith('variable'):
                 variable = strip_var_name(line)
                 if variable in unused_vars:
                     if var_is_ignored(i, lines):
                         logging.info('ignore flag detected, skipping...' + variable)
-                        new_file += line
                     else:
-                        new_file += ''
+                        lines[i] = ''
                         removing_variable = True
                         logging.info('removing...' + variable)
-                else:
-                    new_file += line
-            elif not removing_variable:
-                new_file += line
+                        lines = remove_preceding_comments(i, lines)
 
     with open(var_file, 'w') as file:
-        file.write(new_file)
+        file.write(''.join(lines))
+
+
+def remove_preceding_comments(i, lines):
+    j = i - 1
+    while j >= 0:
+        if not lines[j].startswith('#'):
+            break
+        lines[j] = ''
+        j -= 1
+    return lines
 
 
 def remove_trailing_new_line(i, lines):

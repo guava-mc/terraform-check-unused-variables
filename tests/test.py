@@ -3,8 +3,7 @@ import os
 """
 """
 
-VARIABLE_FILES = ['variables.tf', 'module_test/variables.tf',
-                  '.assertions/variables.tf', '.assertions/module_test/variables.tf']
+VARIABLE_FILES = ['variables.tf', 'module_test/variables.tf']
 CURRENT_DIR = os.path.dirname(os.path.realpath(__file__))
 PARENT_DIR = os.path.dirname(CURRENT_DIR)
 EXPECTED_VALUES = []
@@ -17,16 +16,17 @@ def get_results(args):
     EXPECTED_VALUES = []
     RESULT_VALUES = []
     for var_file in VARIABLE_FILES:
-        with open(CURRENT_DIR + '/' + var_file, 'r') as file:
-            text = file.read()
-            if '.assertions' in var_file:
-                EXPECTED_VALUES.append(text)
-            else:
-                RESULT_VALUES.append(text)
+        RESULT_VALUES.append(read_test_vars(CURRENT_DIR + '/' + var_file))
+        EXPECTED_VALUES.append(read_test_vars(CURRENT_DIR + '/.assertions/' + var_file))
+
+
+def read_test_vars(path):
+    with open(path, 'r') as file:
+        return file.read()
 
 
 def run_dir_test(args):
-    os.system(f"python3 {PARENT_DIR}/terraform-check-unused-variables.py --dir tests -q")
+    os.system(f"python3 {PARENT_DIR}/terraform-check-unused-variables.py --dir . -q")
     get_results(args)
     print('dir test 1...', end='')
     assert EXPECTED_VALUES[0] == RESULT_VALUES[0]
