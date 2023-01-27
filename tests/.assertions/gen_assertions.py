@@ -2,7 +2,7 @@ import os
 
 current = os.path.dirname(os.path.realpath(__file__))
 parent = os.path.dirname(os.path.dirname(current))
-VARIABLE_FILES = ['../variables.tf', '../module_test/variables.tf']
+VARIABLE_FILES = [f'{parent}/tests/variables.tf', f'{parent}/tests/module_test/variables.tf']
 
 os.system(f"python3 {parent}/terraform-check-unused-variables.py --dir ../../tests -r")
 
