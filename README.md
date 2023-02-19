@@ -2,7 +2,7 @@
 
 a pre-commit hook for finding unused variables in terraform modules and removing them.
 
-![pre-commit](https://img.shields.io/badge/pre--commit-Terraform-purple) ![python](https://shields.io/badge/python-v3.x-blue) ![semver](https://img.shields.io/badge/semver-v1.0.1-orange)
+![pre-commit](https://img.shields.io/badge/pre--commit-Terraform-purple) ![python](https://shields.io/badge/python-v3.x-blue) ![semver](https://img.shields.io/badge/semver-v1.1.0-orange)
 ### Scan terraform module(s) for unused variables and remove them.
 
 #### optional arguments:
@@ -23,7 +23,7 @@ a pre-commit hook for finding unused variables in terraform modules and removing
 ```yaml
 repos:
 -   repo: https://github.com/mcole18/terraform-check-unused-variables.git
-    rev: v1.0.0
+    rev: v1.1.0
     hooks:
     -   id: check-unused-vars
         args: [-r, --dir=., --var-file=variables.tf]
