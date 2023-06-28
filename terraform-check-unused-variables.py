@@ -22,23 +22,27 @@ from glob import glob
 
 
 def check_for_unused_vars(dir):
-    variables_file, all_tf_files = find_tf_files(dir)
-    if variables_file is None:
-        return True  # no files to check in this directory
-    logging.info(f'Checking {dir} for unused variables')
-    variables = parse_variables_tf(variables_file)
-    var_references = find_used_variables(all_tf_files)
-    unused_vars = list(variables - var_references)
+    try:
+        variables_file, all_tf_files = find_tf_files(dir)
+        if variables_file is None:
+            return True  # no files to check in this directory
+        logging.info(f'Checking {dir} for unused variables')
+        variables = parse_variables_tf(variables_file)
+        var_references = find_used_variables(all_tf_files)
+        unused_vars = list(variables - var_references)
 
-    if len(unused_vars) > 0:
-        logging.info('unused vars detected:')
-        logging.info("%s\n" % unused_vars)
-        if not args.check_only:
-            remove_unused_vars(unused_vars, variables_file)
+        if len(unused_vars) > 0:
+            logging.info('unused vars detected:')
+            logging.info("%s\n" % unused_vars)
+            if not args.check_only:
+                remove_unused_vars(unused_vars, variables_file)
+            return False
+        else:
+            logging.info('no unused variables found')
+            return True
+    except IndexError as e:
+        logging.error(f'{e}')
         return False
-    else:
-        logging.info('no unused variables found')
-        return True
 
 
 def find_tf_files(_dir):
@@ -57,7 +61,7 @@ def find_tf_files(_dir):
 
         return variables_file, all_tf_files
     except IndexError:
-        raise Exception(f'Failed to find required variable file "{args.var_file}" in {target_dir}, but did find other '
+        raise IndexError(f'Failed to find required variable file "{args.var_file}" in {target_dir}, but did find other '
                         'tf files.\nEnsure running from root terraform module or correct custom dir and the variable '
                         'tf file exists.\n\nTo set custom dir use --dir PATH\nTo set custom var_file --var-file '
                         'FILENAME\n')
@@ -203,6 +207,7 @@ if __name__ == '__main__':
         logging.debug(f'Checking for unused vars in {_dir}')
         passed.append(check_for_unused_vars(_dir))
         logging.debug(f'Completed check in {_dir}\n')
+
     if all(passed):
         sys.exit(0)
     else:
