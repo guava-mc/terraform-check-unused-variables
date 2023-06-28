@@ -122,6 +122,8 @@ def find_used_variables(tf_files):
         logging.debug(f'searching for var references in {tf_file}...')
         with open(tf_file, 'r') as file:
             lines = file.read()
+            # remove commented lines
+            lines = re.sub(r'(\s*#).*', '', lines)
             has_var = set(re.findall(r'var\.([\w]+)', lines))
             invalid_var = set(re.findall(r'[^!{([\s]var\.([\w]+)', lines))
             referenced_vars += list(has_var - invalid_var)
