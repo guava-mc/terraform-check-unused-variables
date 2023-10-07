@@ -114,7 +114,7 @@ def var_is_ignored(i, lines):
 
 def find_used_variables(tf_files):
     referenced_vars = []
-    logging.debug(f'searching for unused vars')
+    logging.debug('searching for unused vars')
     for tf_file in tf_files:
         if 'variables.tf' in tf_file:
             logging.debug(f'skipping {args.var_file}')
