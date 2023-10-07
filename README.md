@@ -9,7 +9,6 @@ a pre-commit hook for finding unused variables in terraform modules and removing
 ```
   -h, --help           show this help message and exit
   --dir DIR            root dir to search for tf files in (default: ".")
-  --var-file VAR_FILE  file name for where tf variables are defined (default: "variables.tf")
   --check-only         flag to only check for unused vars, not remove them
   -r, --recursive      flag to run check unused variables recursively on all directories from root dir
   --ignore IGNORE_TXT  text in variable declaration comment used to tell the hook to ignore a specific unused
@@ -26,11 +25,11 @@ repos:
     rev: v1.2.1
     hooks:
     -   id: check-unused-vars
-        args: [-r, --dir=., --var-file=variables.tf]
+        args: [-r, --dir=.]
 ```
 ### Assumptions
 
-This pre-commit hook assumes standard terraform practices where all variables are declared in a single file for a module and that variables are declared with no leading white space on the keyword or before the closing curly brace.
+This pre-commit hook assumes standard terraform practices such as: variables are declared with no leading white space on the keyword or before the closing curly brace.
 
 ex: variables.tf
 ```hcl
