@@ -1,15 +1,10 @@
-name: checkov
-
+name: ci
 
 on:
-
-  push:
-    branches: [ "main" ]
   pull_request:
     branches: [ "main" ]
 
 permissions: {}
-
 
 jobs:
   pre-commit:
@@ -43,6 +38,7 @@ jobs:
         if: success() || failure()
         with:
           sarif_file: results.sarif
+
   ruff:
     runs-on: ubuntu-latest
     permissions:
